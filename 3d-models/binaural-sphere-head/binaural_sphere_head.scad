@@ -188,7 +188,7 @@ vial_x       = 17.0;     // vial pocket centre, clear of the largest laser
 laser_d_max  = 14;       // largest pen laser the cradle takes (rests on the cradle edges above ~Ø11)
 
 /* [Stand stem] */
-stem_h       = 200;      // stem length (tripod plate to head flat); >= 150 pushes the tripod-head reflection past ~1 ms
+stem_h       = 200;      // stem length, NOT the rod length (see rod_cut); tripod plate to head flat; >= 150 pushes the tripod-head reflection past ~1 ms
 stem_d       = 16;       // thin shaft
 stem_pad_d   = 24;       // top pad under the head's bottom flat (flat_d = 30)
 stem_pad_h   = 3;
@@ -197,7 +197,8 @@ stem_base_h  = 26;       // holds the 1/4"-20 tripod nut and the 3/8"-16 rod nut
 tpod_af      = 11.11;    // 1/4"-20 nut for the tripod screw (7/16")
 tpod_t       = 5.56;
 tpod_d       = 6.35;
-rod_protrude = 13.5;     // 3/8"-16 rod above the pad, into the head nut (through it, with margin for the cut)
+rod_protrude = 13.5;     // design target: 3/8"-16 rod above the pad, through the head nut
+rod_cut      = 203;      // rod length listed in the README (rounded up from the echoed rod_len)
 
 /* [OLED cover] */
 cover_fit    = 0.15;     // clearance on the window walls
@@ -323,6 +324,8 @@ assert(tnut_z0 + tnut_t + tbolt_extra < z_flat + tboss_h - 3, "tripod bore leave
 assert(tnut_af + hole_comp + 6 <= tboss_w, "nut leaves < 3 mm boss wall each side");
 assert(rod_protrude <= tnut_floor + tnut_t + tbolt_extra - 1 && rod_protrude >= tnut_floor + tnut_t + tolerance + 1.5,
        "stem rod must engage the head nut without bottoming");
+assert(rod_cut - (stem_h - rod_nut_z0) >= tnut_floor + tnut_t + tolerance + 1.5 &&
+       rod_cut - (stem_h - rod_nut_z0) <= tnut_floor + tnut_t + tbolt_extra - 1, "rod_cut does not engage the head nut properly");
 assert(groove_d <= 1.0, "sight groove deeper than 1 mm");
 assert(R - z_top + groove_d <= wall - 2, "top flat + groove leave < 2 mm shell");
 assert(vial_x + vial_d/2 + 0.2 + 1.8 <= sight_w/2 && vial_x - vial_d/2 - 0.2 >= laser_d_max/2 + 1, "vial pocket hits the laser or the bar edge");
@@ -336,7 +339,7 @@ echo(seam_outer_d = 2*rho_seam_out, cap_h = cap_h, flare_start_z = z_f, flare_me
 echo(mic_face_below_pole = R - mic_face_z, mic_counterbore = mic_cb_d, header_bore = mic_hb_d);
 echo(board_x0 = board_x0, board_top = board_top, board_end_r = board_end, board_in_r = board_in,
      usb_depth_from_surface = R - board_end, jumper_room = board_x0 + s);
-echo(rod_len = rod_len, cover_seat = cover_seat, cover_edge_t = cover_edge_t, top_flat_depth = R - z_top);
+echo(rod_len = rod_len, rod_cut_protrudes = rod_cut - (stem_h - rod_nut_z0), cover_seat = cover_seat, cover_edge_t = cover_edge_t, top_flat_depth = R - z_top);
 echo(oled_x_range = [oled_x0, oled_x0 + oled_w + 2*oled_tol], oled_min_wall = oled_min_wall);
 
 // === HELPERS ===
