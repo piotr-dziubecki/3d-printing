@@ -117,31 +117,32 @@ conduit_wall = 2.7;      // 6 lines
 /* [Microphone carrier — measured 2026-11-23] */
 // AliExpress "IM73D122 Digital MEMS Microphone Module" (item 1005013163488519): round PCB, MEMS and two
 // 1x3 SMD headers on the back, acoustic port = the hole through the PCB centre on the front ("R") face.
-mic_pcb_d       = 14.0;  // measured (the two rim notches leave 13 mm across; the pocket stays round)
+mic_pcb_d       = 16.5;  // measured (the two rim notches leave 15 mm across; the pocket stays round)
 mic_pcb_t       = 1.0;   // measured
 mic_port_offset = 0.0;   // port at the PCB centre (listing photo of the front face)
-mic_ledge       = 0.7;   // seat ring under the PCB rim; header rows are ~7.9 mm apart (2.0 mm pitch,
-                         //   estimated from the listing photo), so the bore behind it must stay >= 12.5
+mic_ledge       = 1.0;   // seat ring under the PCB rim; header rows are ~9.3 mm apart (2.54 mm pitch,
+                         //   scaled from the listing photo), so the Dupont housings need a bore >= 14.2
 mic_fit         = 0.15;  // diametral slip allowance on the carrier
 
 /* [ESP32-S3 DevKitC-1 clone — identified 2026-11-23] */
 // AliExpress "ESP32-S3 Development Board DevKitC-1 ... WROOM-1" (item 1005012092039320), N16R8, two USB-C
-// (COM + USB), headers soldered pointing down. Measured PCB 26 x 62 mm, 11 mm over the pins.
-board_len    = 69.0;     // envelope: 62 mm PCB + WROOM antenna overhang (~7 mm, estimated from photos)
-board_w      = 26.0;     // measured
+// (COM + USB), headers soldered pointing down. Measured 28 x 64 mm at the widest points, 13 mm over the pins.
+board_len    = 71.0;     // envelope: 64 mm measured + up to ~7 mm WROOM antenna overhang (estimated from photos;
+                         //   if the 64 already includes the antenna, set 64)
+board_w      = 28.0;     // measured at the widest point
 board_t      = 1.6;
 board_comp_h = 3.5;      // tallest part on top (module shield / USB-C)
 board_tol    = 0.4;      // per side, around the outline
 board_web_t  = 4.05;     // web under the board, 9 lines
-board_angle  = 195;      // direction of the USB end in the Y-Z plane: 0 front, 90 up, 180 back
+board_angle  = 191;      // direction of the USB end in the Y-Z plane: 0 front, 90 up, 180 back
 board_jumper_room = 22;  // header plastic 2.5 + Dupont housing 14 + bend, under the PCB
 usb_open_w   = 24;       // slot across the board end (covers both USB-C on dual-port clones)
 usb_open_h   = 9;        // slot height along X
 usb_h        = 3.2;      // USB-C receptacle height (centre = PCB top + usb_h/2)
 
-/* [SSD1306 0.96" OLED — PLACEHOLDERS, measure!] */
-oled_w       = 27.3;     // PLACEHOLDER module width (display long axis), along X
-oled_h       = 27.8;     // PLACEHOLDER module height (header edge on top)
+/* [SSD1306 0.96" OLED — outline measured 2026-11-23, stack and window offset still placeholders] */
+oled_w       = 27.0;     // measured module width (display long axis), along X
+oled_h       = 29.0;     // measured module height (header edge on top)
 oled_stack   = 3.0;      // PLACEHOLDER glass + tape + PCB thickness
 oled_win_w   = 24;       // window along X (active area ~21.7)
 oled_win_h   = 17;       // window height (active area ~10.9; tall so an unmeasured offset still shows it all)
@@ -151,6 +152,7 @@ oled_angle   = 155;      // module centre direction in the Y-Z plane (back, 25°
 oled_face_r  = 82.5;     // radius of the flat the glass presses against
 oled_tol     = 0.3;
 oled_lip     = 2.0;      // lip behind the bottom edge of the OLED PCB
+oled_pin_room = 18;      // behind the PCB: 11.5 mm over the pins measured (stack ~3 + header) + Dupont housings and bend
 
 /* [Joint] */
 tab_angles   = [10, 70, 120, 240, 300];
@@ -386,7 +388,7 @@ assert(2*rho_seam_out <= bed_xy - 10, "cap footprint exceeds the bed");
 assert(cap_h <= bed_z && 2*s <= bed_z, "part too tall");
 assert(z_f > s + boss_h + 2, "flare starts below the plate bosses: chamber would vanish");
 assert(ceiling_overhang <= 60, "chamber ceiling over 60° sags in PLA");
-assert(mic_hb_d >= 12.5, "header bore under the carrier < 12.5 mm: the two 1x3 header housings (rows ~7.9 mm apart) won't pass");
+assert(mic_hb_d >= 14.2, "header bore under the carrier < 14.2 mm: the two 1x3 Dupont housings (rows ~9.3 mm apart) won't pass");
 assert(mic_hb_d < mic_cb_d, "seat ring has no width");
 assert(abs(mic_port_offset) <= mic_pcb_d/2 - 1, "port outside the carrier");
 assert(abs(mic_port_offset) + mic_hb_d/2 <= conduit_id/2 + 1.5, "offset header bore no longer meets the conduit");
@@ -721,7 +723,7 @@ module board_dummy() polar(board_angle) {
 module oled_dummy() polar(oled_angle) {
     hp = oled_h/2;
     prism(oled_face_r - oled_stack - fudge, oled_face_r - fudge, -hp, hp, oled_x0 + oled_tol, oled_x0 + oled_tol + oled_w);
-    prism(oled_back - 16, oled_back, -hp + 0.3, -hp + 3.0, oled_x0 + oled_tol + 6, oled_x0 + oled_tol + oled_w - 6);   // header + Dupont
+    prism(oled_back - oled_pin_room, oled_back, -hp + 0.3, -hp + 3.0, oled_x0 + oled_tol + 6, oled_x0 + oled_tol + oled_w - 6);   // header + Dupont
 }
 
 module bat_dummy() polar(bat_angle)

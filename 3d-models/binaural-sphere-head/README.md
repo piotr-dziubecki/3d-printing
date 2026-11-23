@@ -58,7 +58,7 @@ The stem is a 200 mm tower on a Ø34 base: give it a 5 mm brim and lower the out
 
 ## Assembly
 
-1. **Microphones.** Fit Dupont jumpers to each carrier's two 3-pin headers first. Feed the wires and housings down through the ear pocket into the conduit, then press the carrier in until it sits on the seat ring, port facing out. Its face should be flush with the dome at the rim, with the centre ≤0.35 mm below the sphere. Seal the ring gap round the carrier with a thin bead of silicone or acoustic putty, wiped flush. The acoustic port must stay open and nothing may sit in front of it. Nothing else holds the carrier, so also fix it from inside: a few drops of CA glue or silicone where its rim meets the seat ring.
+1. **Microphones.** Fit Dupont jumpers to each carrier's two 3-pin headers first. Feed the wires and housings down through the ear pocket into the conduit, then press the carrier in until it sits on the seat ring, port facing out. Its face should be flush with the dome at the rim, with the centre about 0.4 mm below the sphere. Seal the ring gap round the carrier with a thin bead of silicone or acoustic putty, wiped flush. The acoustic port must stay open and nothing may sit in front of it. Nothing else holds the carrier, so also fix it from inside: a few drops of CA glue or silicone where its rim meets the seat ring.
 2. **Magnets and pins.** Glue the magnets into the pockets on both faces of the slab and on both cap plates. Check polarity before the glue sets. Put every slab magnet in north face out, on both faces, and every cap magnet south face out. Then any cap fits either side, and no magnet repels. A compass or a spare marked magnet tells the poles apart. Press the dowel pins into the slab (tight holes, 7 mm deep; glue them if they come out loose). The cap holes are a sliding fit.
 3. **Tripod nut.** Drop the 3/8"-16 nut into the slot from the slab's right face. The right cap closes the slot. It sits 2 mm above the bottom flat.
 4. **Stem.** Drop the 1/4"-20 nut into the lower slot of the stem base and a 3/8"-16 nut into the upper slot. Put a dab of glue or tape over each slot so the nuts can't slide out when the stem is handled. Screw the 203 mm rod down through the stem into the upper nut until it stops on the plastic under it; about 13.8 mm stands out of the top pad and passes right through the head nut. Screw the head onto the rod until its bottom flat sits on the pad, and the stem onto the tripod screw. The stem puts the tripod head 200 mm below the sphere, so its reflection arrives after the window used for the direct sound. Without the stem, a 3/8"→1/4" reducer bushing in the head nut takes a camera screw directly.
@@ -127,9 +127,9 @@ From the parts on hand and their AliExpress listings:
 
 | Part | Listing | Value in the model |
 |---|---|---|
-| Mic carrier | "IM73D122 Digital MEMS Microphone Module" (item 1005013163488519) | `mic_pcb_d` 14.0 (13 across the two rim notches), `mic_pcb_t` 1.0, port at the centre (`mic_port_offset` 0), seat ring `mic_ledge` 0.7 so the bore behind it is 12.6 mm for the two 1×3 headers (rows about 7.9 mm apart, 2.0 mm pitch, estimated from the listing photo). Pins: 1 3.3 V, 2 GND, 3 NC, 4 L/R, 5 CLOCK, 6 DATA. 3.3 V only. |
-| ESP32-S3 | "ESP32-S3 Development Board DevKitC-1 … WROOM-1", N16R8, headers soldered (item 1005012092039320) | PCB 26 × 62 mm measured, 11 mm over the pins; `board_len` 69 covers the antenna overhang (about 7 mm, estimated from photos) |
-| OLED | "0.96 inch OLED IIC … SSD1306", white (item 1005006141235306); header GND, VCC, SCL, SDA | still the placeholders below: the measured 23 × 25 mm doesn't match the usual 27 × 27 mm module, so measure the PCB edge to edge, holes included |
+| Mic carrier | "IM73D122 Digital MEMS Microphone Module" (item 1005013163488519) | `mic_pcb_d` 16.5 (15 across the two rim notches), `mic_pcb_t` 1.0, port at the centre (`mic_port_offset` 0), seat ring `mic_ledge` 1.0 so the bore behind it is 14.5 mm for the two 1×3 headers with Dupont housings (rows about 9.3 mm apart at 2.54 mm pitch, scaled from the listing photo). Pins: 1 3.3 V, 2 GND, 3 NC, 4 L/R, 5 CLOCK, 6 DATA. 3.3 V only. 8 mm over the pins. |
+| ESP32-S3 | "ESP32-S3 Development Board DevKitC-1 … WROOM-1", N16R8, headers soldered (item 1005012092039320) | 28 × 64 mm at the widest points, 13 mm over the pins. `board_w` 28; `board_len` 71 allows for up to 7 mm of antenna overhang beyond the 64 mm (estimated from photos; set 64 if the 64 already includes the antenna). `board_angle` 191 (was 195) so the wider header rows clear the charge-module cradle. |
+| OLED | "0.96 inch OLED IIC … SSD1306", white (item 1005006141235306); header GND, VCC, SCL, SDA | `oled_w` 27 (display width), `oled_h` 29 (header edge on top); 11.5 mm over the pins, with 18 mm left behind the PCB for the header and Dupont housings (`oled_pin_room`). Glass + PCB thickness and the active-area offset are still placeholders (below). |
 
 ## Placeholders: measure these before printing
 
@@ -140,7 +140,6 @@ Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with cali
 | `board_comp_h` | 3.5 | Tallest part on the board's top side |
 | `usb_open_w`, `usb_h` | 24, 3.2 | Span of the USB-C connector(s) across the board end, and receptacle height |
 | — | — | Nothing on the board's underside along its centreline (the board rests on a 4 mm web there) |
-| `oled_w`, `oled_h` | 27.3, 27.8 | OLED module PCB outline |
 | `oled_stack` | 3.0 | Glass + tape + PCB thickness |
 | `oled_win_off`, `oled_win_h` | 0.0, 17 | Offset of the display's active area from the PCB centre (+ = away from the header). The window is 17 mm tall for a ~10.9 mm active area, so an offset of up to ±3 mm still shows the whole display; measure it and you can shrink the window. |
 | `tnut_af`, `tnut_t` | 14.29, 8.33 | Your 3/8"-16 nuts (head and stem) |
@@ -166,4 +165,4 @@ Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with cali
 | v1 | claude-opus-5-5 (final review: claude-fable-5-2) | 2026-11-22 | Initial design: three-part sphere (caps + centre slab), sealed sand chambers, flush mic pockets, ESP32/OLED bay, 1/4"-20 nut, magnet + dowel joints |
 | v2 | claude-opus-5-5 (review: claude-sonnet-5-5) | 2026-11-23 | After the research report: top flat + groove and a sight bar (laser, bubble level) for aiming; 3/8"-16 nut and a 200 mm stand stem; front notch 1.5 → 0.5 mm; flush OLED cover |
 | v3 | claude-opus-5-5 (review: claude-sonnet-5-5) | 2026-11-23 | Battery bay (18650 holder cradle, charge/boost module, USB-C charge port, toggle switch); sofa hook (saddle + hinged arm); cork fill instead of sand; Bambu projects for the P2S |
-| v3.1 | claude-opus-5-5 | 2026-11-23 | Mic pocket set to the measured carrier (Ø14 × 1 mm, port centred, 0.7 mm seat ring, 12.6 mm header bore); ESP32 and mic listings recorded |
+| v3.1 | claude-opus-5-5 | 2026-11-23 | Measured parts: mic pocket for the Ø16.5 × 1 mm carrier (port centred, 14.5 mm header bore); ESP32 cradle for 28 × 64 mm, turned 195° → 191°; OLED outline 27 × 29 mm; listings recorded |
