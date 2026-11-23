@@ -24,7 +24,7 @@ It runs from a USB power bank on a cable that plugs into the ESP32 through a slo
 
 On a Bambu Lab P2S, open the project files in `bambu/` instead: they carry the print settings below. Other 256 mm Bambu printers (X1C, P1S) take the same STLs.
 
-**Hardware:** 10 × 10×3 mm neodymium disc magnets; 10 × 3×12 mm steel dowel pins (or M3×12 screw shanks with the heads cut off); 1 × 3/8"-16 hex nut (9/16" across flats, 21/64" thick) in the head; a 3/8"→1/4"-20 brass reducer bushing if your tripod screw is 1/4" only; a pen laser up to Ø14 mm; a Ø15 × 7 mm bullseye bubble level; cork granulate 2–4 mm (about 1.2 L) for the cap chambers; silicone or acoustic putty; double-sided foam tape.
+**Hardware:** 10 × 10×3 mm neodymium disc magnets; 10 × 3×12 mm steel dowel pins (or M3×12 screw shanks with the heads cut off); 1 × 3/8"-16 hex nut (9/16" across flats, 21/64" thick) in the head; a 3/8"→1/4"-20 brass reducer bushing if your tripod screw is 1/4" only; a laser module or pen laser up to Ø14 mm (class 2, under 1 mW; e.g. a 3 V Ø10 module run from the ESP32's 3V3 pin, see Aim); a Ø15 × 7 mm bullseye bubble level; cork granulate up to 10 mm grain (about 1.1 L; two 600 ml packs) for the cap chambers; silicone or acoustic putty; double-sided foam tape.
 
 **Power:** a USB power bank, preferably one with a low-current mode (many switch off below 50–100 mA), and a USB-C cable long enough to run down the stand.
 
@@ -54,7 +54,7 @@ The head splits into a right cap, a 40 mm centre slab and a left cap, on two pla
 | Infill | 15% gyroid. Add a 40% modifier over the top 25 mm of each cap, so the solid around the ear is stiff as printed. Print the slab at 25% (tripod boss), and the stem and both hook parts at 40%. |
 | Supports | None |
 | Temperatures | Bambu PLA Basic preset (220 °C nozzle); generic PLA 200–220 °C, bed 60 °C |
-| Time / filament (Bambu Studio, P2S, PLA Basic) | cap 6 h 1 min, 260 g each; slab (25%) 6 h 0 min, 226 g; hook saddle (40%) 6 h 16 min, 175 g; hook arm (40%) 1 h 50 min, 45 g; stem (40%) 1 h 48 min, 44 g; sight bar 23 min, 15 g; OLED cover and fill plugs a few minutes each; about 1.03 kg in all (about 28 h) |
+| Time / filament (Bambu Studio, P2S, PLA Basic) | cap 5 h 59 min, 258 g each; slab (25%) 6 h 0 min, 226 g; hook saddle (40%) 6 h 16 min, 175 g; hook arm (40%) 1 h 50 min, 45 g; stem (40%) 1 h 48 min, 44 g; sight bar 23 min, 15 g; OLED cover and fill plugs a few minutes each; about 1.03 kg in all (about 28 h) |
 
 Don't enable any slicer option that fills enclosed cavities: the caps are sealed hollow chambers by design.
 
@@ -88,16 +88,16 @@ The saddle is drawn for an upright backrest. A backrest that reclines 10–20° 
 ## Setting up for a measurement
 
 - **Height and position.** Ear axis at listener ear height (1.2 m is the ISO 3382 default for a seated listener), and centred so the two tweeter distances match within 3 mm. Each centimetre off-centre shifts ITD by about 29 µs.
-- **Aim.** Seat the sight bar on the top flat (its rib keys into the groove), level the head with the bubble, put a pen laser (up to Ø14 mm) in the V on top and turn the tripod until the dot lands on the midpoint between the speakers. One degree of yaw is 9–13 µs of ITD. Take the bar off before measuring.
+- **Aim.** Seat the sight bar on the top flat (its rib keys into the groove), level the head with the bubble, put a pen laser (up to Ø14 mm) in the V on top and turn the tripod until the dot lands on the midpoint between the speakers. A 3 V laser module can run from the ESP32: two Dupont wires on the 3V3 and GND pins, out through the free half of the USB slot to a 2-pin connector, then 20–25 cm to the bar. Unplug it at the connector before measuring and tuck the stub under the slot's foam. Check the module's current on a bench supply at 3.3 V first: one without a built-in limiter can die at 3.3 V. Cheap modules often point a little off their barrel axis: roll the laser 180° in the V, and if the dot moves, aim at the midpoint of the two dots. One degree of yaw is 9–13 µs of ITD. Take the bar off before measuring.
 - **OLED cover.** Press the cover into the display window until it is flush. Nothing latches it: the window faces 25° up, so it stays in, but a small loop of tape or a pea of putty on its seat keeps it there when you handle the head. Lift it out with a fingernail in the notch on its edge.
 - **Cable.** Wrap the USB-C plug in 1–2 mm closed-cell foam tape so it fills the slot and the port doesn't vent the bay. Run the cable straight down the back of the head and tape it along the stand or the hook arm; a loose loop near the head reflects sound into the ears. Put the power bank on the floor or the seat, away from the head. With the optional battery, unplug all cables while measuring and close the slots with tape or foam.
 - **Calibration.** Measure, pan the tripod exactly 180° (aim with the laser at the other way), and measure again: each mic then sits where the other was, so averaging the two runs cancels the mic mismatch in ITD and ILD. See the research report in `reports/`.
 
 ## Chamber fill: cork
 
-Each cap holds 0.54 L of chamber volume. Fill both with cork granulate, 2–4 mm grain (it must pass the Ø14 mm fill port).
+Each cap holds 0.54 L of chamber volume. Fill both with cork granulate. The Ø30 fill port takes grains up to about 10 mm; finer grain (2–4 mm) packs denser if you can get it.
 
-1. Stand the cap seam face up. Pour the granulate through the fill port, tapping and shaking the cap as you go, until it is packed full to the port. A loose fill rattles; packed grains damp the shell by friction, as sand does.
+1. Stand the cap seam face up. Pour the granulate through the fill port, tapping and shaking the cap as you go, until it is packed full to the port. If grains bridge in the port, poke them through with a pencil. A loose fill rattles; packed grains damp the shell by friction, as sand does.
 2. Press the fill plug in with a smear of silicone on its shank.
 
 At a bulk density of about 0.1–0.15 g/cm³ (typical catalogue values, not measured) the fill adds 55–80 g per cap, and the whole head weighs about 0.9–1.0 kg (printed parts 0.75 kg, cork 0.13 kg, electronics plus the optional cell and holder up to 0.1 kg). Sand (0.83 kg per cap, about 2.4 kg in all) still works on a tripod if you want extra mass, but not on the sofa hook. Open-cell foam or pillow fibre also works; it damps the air in the chamber more than the shell. Empty chambers work too: the 4.5 mm shell is stiff without a fill. How much any fill improves the measurement is not measured.
@@ -174,3 +174,4 @@ Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with cali
 | v3 | claude-opus-5-5 (review: claude-sonnet-5-5) | 2026-11-23 | Battery bay (18650 holder cradle, charge/boost module, USB-C charge port, toggle switch); sofa hook (saddle + hinged arm); cork fill instead of sand; Bambu projects for the P2S |
 | v3.1 | claude-opus-5-5 | 2026-11-23 | Measured parts: mic pocket for the Ø16.5 × 1 mm carrier (port centred, 14.5 mm header bore); ESP32 cradle for 28 × 64 mm, turned 195° → 191°; OLED outline 27 × 29 mm; listings recorded |
 | v3.2 | claude-opus-5-5 | 2026-11-23 | Power parts from the cart: battery cradle 75 × 21 × 18, module 25 × 20, switch body clash check, bubble level 15 × 8 |
+| v3.3 | claude-opus-5-5 | 2026-11-23 | Fill port Ø14 → Ø30 at r = 36 mm for 5–10 mm cork; wider fill plug; `clash_fill_plug` check |

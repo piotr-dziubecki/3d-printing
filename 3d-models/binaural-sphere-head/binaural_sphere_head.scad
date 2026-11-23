@@ -165,8 +165,8 @@ pin_len      = 12;
 pin_r        = 63;       // dowel centre radius
 
 /* [Fill port] */
-fill_d       = 14;
-fill_r       = 45;
+fill_d       = 30;       // wide enough for 5-10 mm cork granulate (Ø14 bridged on 10 mm grains)
+fill_r       = 36;       // port centre radius on the cap plate: clear of the conduit and the tab ring
 fill_angle   = 90;
 
 /* [Tripod] */
@@ -267,7 +267,7 @@ mbolt_len    = 38.1;     // 3/8"-16 x 1-1/2" hex bolt (shank length)
 jam_t        = 8.33;     // 3/8"-16 jam / thumb nut between the arm pad and the head's flat
 
 /* [Render] */
-part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_power", "clash_power_board", "clash_switch", "hook_saddle", "hook_arm", "view_sofa", "view_inside", "view_inside_l", "clash_cap_slab_r", "clash_cap_slab_l", "clash_board", "clash_oled", "check_chamber"]
+part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_power", "clash_power_board", "clash_switch", "hook_saddle", "hook_arm", "view_sofa", "view_inside", "view_inside_l", "clash_cap_slab_r", "clash_cap_slab_l", "clash_fill_plug", "clash_board", "clash_oled", "check_chamber"]
 
 // === DERIVED CONSTANTS ===
 extrusion_width = nozzle_diameter * 1.125;   // 0.45
@@ -510,6 +510,8 @@ module cap_local() difference() {
     translate(concat(cap_uv(fill_r, fill_angle), [s - fudge])) cylinder(d1 = fill_hole + 2*ef_chamfer, d2 = fill_hole, h = ef_chamfer + fudge);
 }
 module cap_right_head() rotate([0, 90, 0]) cap_local();
+// fill plug seated in the right cap's port, flange on the seam face (assembled pose)
+module fill_plug_head() rotate([0, 90, 0]) translate(concat(cap_uv(fill_r, fill_angle), [s - 1.6])) fill_plug();
 module cap_left_head()  mirror([1, 0, 0]) cap_right_head();
 module cap_right_print() translate([0, 0, -s]) cap_local();
 module cap_left_print()  mirror([1, 0, 0]) cap_right_print();
@@ -707,7 +709,7 @@ module oled_cover_print() translate([0, 0, -(oled_face_r + cover_gap)]) rotate([
 
 // === FILL PLUG ===
 module fill_plug() {
-    stem = fill_d - 0.1;   // slip into the (compensated) Ø14 hole; silicone seals it
+    stem = fill_d - 0.1;   // slip into the (compensated) hole; silicone seals it
     cylinder(d = fill_d + 6, h = 1.6);
     translate([0, 0, 1.6 - fudge]) cylinder(d = stem, h = plate_t - 0.7);
     translate([0, 0, 1.6 + plate_t - 0.7 - 3*fudge]) cylinder(d1 = stem, d2 = stem - 1, h = 0.5);   // lead-in
@@ -840,6 +842,7 @@ if (part == "clash_laser") intersection() {   // largest laser resting in the cr
     translate([0, -sight_len/2, laser_z]) rotate([-90, 0, 0]) cylinder(d = laser_d_max, h = sight_len);
 }
 if (part == "clash_cap_slab_r") intersection() { translate([fudge, 0, 0]) cap_right_head(); slab_head(); }
+if (part == "clash_fill_plug") intersection() { union() { fill_plug_head(); mirror([1, 0, 0]) fill_plug_head(); } union() { slab_head(); electronics(); } }
 if (part == "clash_cap_slab_l") intersection() { translate([-fudge, 0, 0]) cap_left_head(); slab_head(); }
 if (part == "clash_board") intersection() { slab_head(); board_dummy(); }
 if (part == "clash_oled")  intersection() { slab_head(); oled_dummy(); }
