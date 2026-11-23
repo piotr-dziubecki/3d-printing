@@ -127,8 +127,7 @@ mic_fit         = 0.15;  // diametral slip allowance on the carrier
 /* [ESP32-S3 DevKitC-1 clone — identified 2026-11-23] */
 // AliExpress "ESP32-S3 Development Board DevKitC-1 ... WROOM-1" (item 1005012092039320), N16R8, two USB-C
 // (COM + USB), headers soldered pointing down. Measured 28 x 64 mm at the widest points, 13 mm over the pins.
-board_len    = 71.0;     // envelope: 64 mm measured + up to ~7 mm WROOM antenna overhang (estimated from photos;
-                         //   if the 64 already includes the antenna, set 64)
+board_len    = 64.0;     // measured, antenna included
 board_w      = 28.0;     // measured at the widest point
 board_t      = 1.6;
 board_comp_h = 3.5;      // tallest part on top (module shield / USB-C)
@@ -140,10 +139,10 @@ usb_open_w   = 24;       // slot across the board end (covers both USB-C on dual
 usb_open_h   = 9;        // slot height along X
 usb_h        = 3.2;      // USB-C receptacle height (centre = PCB top + usb_h/2)
 
-/* [SSD1306 0.96" OLED — outline measured 2026-11-23, stack and window offset still placeholders] */
+/* [SSD1306 0.96" OLED — measured 2026-11-23 except the window offset] */
 oled_w       = 27.0;     // measured module width (display long axis), along X
 oled_h       = 29.0;     // measured module height (header edge on top)
-oled_stack   = 3.0;      // PLACEHOLDER glass + tape + PCB thickness
+oled_stack   = 2.6;      // glass stands 1.0 above the PCB (measured) + PCB taken as 1.6 (thickest usual)
 oled_win_w   = 24;       // window along X (active area ~21.7)
 oled_win_h   = 17;       // window height (active area ~10.9; tall so an unmeasured offset still shows it all)
 oled_win_flare = 4.0;    // tangential widening per side at the surface (keeps the top bridge <= 21 mm)

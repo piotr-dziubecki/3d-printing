@@ -128,8 +128,8 @@ From the parts on hand and their AliExpress listings:
 | Part | Listing | Value in the model |
 |---|---|---|
 | Mic carrier | "IM73D122 Digital MEMS Microphone Module" (item 1005013163488519) | `mic_pcb_d` 16.5 (15 across the two rim notches), `mic_pcb_t` 1.0, port at the centre (`mic_port_offset` 0), seat ring `mic_ledge` 1.0 so the bore behind it is 14.5 mm for the two 1×3 headers with Dupont housings (rows about 9.3 mm apart at 2.54 mm pitch, scaled from the listing photo). Pins: 1 3.3 V, 2 GND, 3 NC, 4 L/R, 5 CLOCK, 6 DATA. 3.3 V only. 8 mm over the pins. |
-| ESP32-S3 | "ESP32-S3 Development Board DevKitC-1 … WROOM-1", N16R8, headers soldered (item 1005012092039320) | 28 × 64 mm at the widest points, 13 mm over the pins. `board_w` 28; `board_len` 71 allows for up to 7 mm of antenna overhang beyond the 64 mm (estimated from photos; set 64 if the 64 already includes the antenna). `board_angle` 191 (was 195) so the wider header rows clear the charge-module cradle. |
-| OLED | "0.96 inch OLED IIC … SSD1306", white (item 1005006141235306); header GND, VCC, SCL, SDA | `oled_w` 27 (display width), `oled_h` 29 (header edge on top); 11.5 mm over the pins, with 18 mm left behind the PCB for the header and Dupont housings (`oled_pin_room`). Glass + PCB thickness and the active-area offset are still placeholders (below). |
+| ESP32-S3 | "ESP32-S3 Development Board DevKitC-1 … WROOM-1", N16R8, headers soldered (item 1005012092039320) | 28 × 64 mm at the widest points, 13 mm over the pins. `board_w` 28, `board_len` 64 (antenna included). `board_angle` 191 (was 195) so the wider header rows clear the charge-module cradle. |
+| OLED | "0.96 inch OLED IIC … SSD1306", white (item 1005006141235306); header GND, VCC, SCL, SDA | `oled_w` 27 (display width), `oled_h` 29 (header edge on top); 11.5 mm over the pins, with 18 mm left behind the PCB for the header and Dupont housings (`oled_pin_room`). `oled_stack` 2.6: the glass stands 1.0 mm above the PCB (measured), PCB taken as 1.6. The active-area offset is still a placeholder (below). |
 
 ## Placeholders: measure these before printing
 
@@ -140,7 +140,6 @@ Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with cali
 | `board_comp_h` | 3.5 | Tallest part on the board's top side |
 | `usb_open_w`, `usb_h` | 24, 3.2 | Span of the USB-C connector(s) across the board end, and receptacle height |
 | — | — | Nothing on the board's underside along its centreline (the board rests on a 4 mm web there) |
-| `oled_stack` | 3.0 | Glass + tape + PCB thickness |
 | `oled_win_off`, `oled_win_h` | 0.0, 17 | Offset of the display's active area from the PCB centre (+ = away from the header). The window is 17 mm tall for a ~10.9 mm active area, so an offset of up to ±3 mm still shows the whole display; measure it and you can shrink the window. |
 | `tnut_af`, `tnut_t` | 14.29, 8.33 | Your 3/8"-16 nuts (head and stem) |
 | `tpod_af`, `tpod_t` | 11.11, 5.56 | Your 1/4"-20 nut in the stem base |
