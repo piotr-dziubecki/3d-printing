@@ -195,8 +195,8 @@ sight_len    = 70;       // bar along Y
 sight_w      = 54;       // bar along X
 sight_t      = 6;        // bar thickness
 laser_v_d    = 4.0;      // 90° V cradle along Y on top of the bar (pen lasers up to ~Ø14)
-vial_d       = 15.0;     // PLACEHOLDER bullseye bubble level diameter
-vial_h       = 7.0;      // PLACEHOLDER bullseye level height
+vial_d       = 15.0;     // bullseye bubble level diameter
+vial_h       = 8.0;      // bullseye level height (cart: 15 x 8 mm, item 1005013292329381)
 vial_x       = 17.0;     // vial pocket centre, clear of the largest laser
 laser_d_max  = 14;       // largest pen laser the cradle takes (rests on the cradle edges above ~Ø11)
 
@@ -220,20 +220,20 @@ cover_flare_gap = 0.05;  // deliberate clearance on the flares, so the cover can
 cover_pry_w  = 4;        // fingernail notch at the cover's +X edge
 cover_pry_d  = 0.8;
 
-/* [Battery — PLACEHOLDERS, measure!] */
+/* [Battery and power — from the AliExpress cart listings, 2026-11-23] */
 // one 18650 cell in a single-cell holder, lying as a chord in the front-lower slab, slid in from the
 // right seam face and held by the right cap plate (like the OLED)
-bat_len      = 78;       // PLACEHOLDER holder length (tangential)
-bat_w        = 21;       // PLACEHOLDER holder width (radial)
-bat_h        = 21;       // PLACEHOLDER holder height (along X)
+bat_len      = 75;       // holder length (tangential); listing drawing 75 x 21 x 18, item 1005012567884640
+bat_w        = 21;       // holder width (radial)
+bat_h        = 18;       // holder height (along X)
 bat_tol      = 0.4;
 bat_angle    = 335;      // chord centre direction (front, 25° down): corners fall between the tabs at 300 and 10
 bat_r_in     = 16;       // inner (radial) face of the holder; keeps the conduit mouths free
 // charge + 5 V boost module (USB-C in, 5 V out to the ESP32 5V pin), PCB lying flat (thickness along X)
-pm_len       = 25;       // PLACEHOLDER module length (radial, USB-C at the outer end)
-pm_w         = 21;       // PLACEHOLDER module width (tangential)
+pm_len       = 25;       // module length (radial, USB-C at the outer end); listing 25 x 20 x 3, item 1005007431366870
+pm_w         = 20;       // module width (tangential)
 pm_t         = 1.6;      // PCB thickness
-pm_comp_h    = 4.0;      // PLACEHOLDER tallest part on top (USB-C receptacle ~3.2)
+pm_comp_h    = 4.0;      // tallest part on top; kept at 4 (listing says 3 mm overall, USB-C receptacle ~3.2)
 pm_usb_w     = 9.0;      // USB-C receptacle width (tangential)
 pm_usb_h     = 3.2;      // receptacle height (centre = PCB top + pm_usb_h/2)
 pm_angle     = 223;      // back-bottom, between the ESP32 jumpers and the tab at 240
@@ -243,6 +243,8 @@ sw_d         = 6.2;      // panel toggle switch thread (M6 mini toggle); hole al
 sw_angle     = 223;
 sw_x         = 7.0;      // switch position along X (beside the charge port)
 sw_spot_d    = 12;       // flat spot-face for the switch nut
+// MTS-102 mini toggle (item 1005008144987146): bushing M6x0.75 x 8.8, body 13.2 x 7.9 x 9.5, pins 4
+sw_body      = [13.2, 7.9, 9.5 + 4];   // tangential, along X, radial depth incl. pins (clash check only)
 
 /* [Sofa hook] */
 // use frame: Y forward (toward the speakers), Z up, origin = front-top edge of the backrest
@@ -265,7 +267,7 @@ mbolt_len    = 38.1;     // 3/8"-16 x 1-1/2" hex bolt (shank length)
 jam_t        = 8.33;     // 3/8"-16 jam / thumb nut between the arm pad and the head's flat
 
 /* [Render] */
-part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_power", "clash_power_board", "hook_saddle", "hook_arm", "view_sofa", "view_inside", "view_inside_l", "clash_cap_slab_r", "clash_cap_slab_l", "clash_board", "clash_oled", "check_chamber"]
+part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_power", "clash_power_board", "clash_switch", "hook_saddle", "hook_arm", "view_sofa", "view_inside", "view_inside_l", "clash_cap_slab_r", "clash_cap_slab_l", "clash_board", "clash_oled", "check_chamber"]
 
 // === DERIVED CONSTANTS ===
 extrusion_width = nozzle_diameter * 1.125;   // 0.45
@@ -731,6 +733,10 @@ module bat_dummy() polar(bat_angle)
 module mic_dummy() for (sx = [-1, 1])
     translate([sx*(mic_face_z - mic_pcb_t/2), 0, 0]) rotate([0, 90, 0]) translate([mic_port_offset, 0, 0])
         cylinder(d = mic_pcb_d, h = mic_pcb_t, center = true);
+module sw_dummy() polar(pm_angle) {   // toggle body inside the band, 0.5 mm off the wall (washer/curvature)
+    r1 = rho_in_at(sw_x + sw_body[1]/2) - 0.5;
+    prism(r1 - sw_body[2], r1, -sw_body[0]/2, sw_body[0]/2, sw_x - sw_body[1]/2, sw_x + sw_body[1]/2);
+}
 module pm_dummy() polar(pm_angle) {
     y0 = pm_in + pm_tol; y1 = pm_end - pm_tol + 0.3;
     prism(y0, y1, -pm_w/2, pm_w/2, pm_x0 + fudge, pm_x0 + pm_t);
@@ -796,7 +802,7 @@ module assembly(gap = 0) {
 // colour view with the shells see-through, to show the electronics inside
 module electronics() {
     color("green") board_dummy(); color("red") bat_dummy(); color("purple") pm_dummy();
-    color("black") oled_dummy(); color("gold") mic_dummy();
+    color("black") oled_dummy(); color("gold") mic_dummy(); color("blue") sw_dummy();
 }
 // colour views with one cap left off, to show the electronics in the bay
 if (part == "view_inside" || part == "view_inside_l") {
@@ -818,6 +824,7 @@ if (part == "view_sofa") {
 if (part == "hook_saddle") hook_saddle_print();
 if (part == "hook_arm")    hook_arm_print();
 if (part == "clash_power") intersection() { slab_head(); union() { bat_dummy(); pm_dummy(); } }
+if (part == "clash_switch") intersection() { sw_dummy(); union() { slab_head(); board_dummy(); pm_dummy(); bat_dummy(); oled_dummy(); } }
 if (part == "clash_power_board") intersection() { union() { bat_dummy(); pm_dummy(); } board_dummy(); }
 if (part == "cap_right") cap_right_print();
 if (part == "cap_left")  cap_left_print();

@@ -26,7 +26,7 @@ On a Bambu Lab P2S, open the project files in `bambu/` instead: they carry the p
 
 **Hardware:** 10 × 10×3 mm neodymium disc magnets; 10 × 3×12 mm steel dowel pins (or M3×12 screw shanks with the heads cut off); 2 × 3/8"-16 hex nut (9/16" across flats, 21/64" thick), one in the head and one in the stem; 1 × 1/4"-20 hex nut (7/16" AF) in the stem base; 1 × 3/8"-16 threaded rod cut to 203 mm (`rod_cut`; the model echoes the exact `rod_len`); optional 3/8"→1/4"-20 brass reducer bushing to put the head straight on a camera tripod; a pen laser up to Ø14 mm; a Ø15 × 7 mm bullseye bubble level; cork granulate 2–4 mm (about 1.2 L) for the cap chambers; silicone or acoustic putty; double-sided foam tape.
 
-**Power:** one protected 18650 Li-ion cell (button top, about 3000 mAh); a single-cell 18650 holder with wire leads (about 78 × 21 × 21 mm); a 1-cell charge + 5 V boost module with USB-C input and charge-while-discharge (about 25 × 21 mm, IP5306 class); a panel-mount mini toggle switch with an M6 thread at least 8 mm long (MTS-102 class); thin silicone wire; double-sided foam tape.
+**Power:** one protected 18650 Li-ion cell (button top, about 3000 mAh); a single-cell 18650 holder with wire leads (75 × 21 × 18 mm); a 1-cell charge + 5 V boost module with USB-C input and charge-while-discharge (25 × 20 mm); a panel-mount mini toggle switch with an M6 thread at least 8 mm long (MTS-102 class); thin silicone wire; double-sided foam tape.
 
 **Sofa hook:** 1 × M8 × 70 bolt, 2 × M8 washers, 1 × M8 rubber (EPDM) washer and 1 × M8 wing nut (pitch hinge); 1 × 3/8"-16 × 1½" (38 mm) hex bolt and 1 × 3/8"-16 thumb or jam nut (head mount).
 
@@ -130,6 +130,10 @@ From the parts on hand and their AliExpress listings:
 | Mic carrier | "IM73D122 Digital MEMS Microphone Module" (item 1005013163488519) | `mic_pcb_d` 16.5 (15 across the two rim notches), `mic_pcb_t` 1.0, port at the centre (`mic_port_offset` 0), seat ring `mic_ledge` 1.0 so the bore behind it is 14.5 mm for the two 1×3 headers with Dupont housings (rows about 9.3 mm apart at 2.54 mm pitch, scaled from the listing photo). Pins: 1 3.3 V, 2 GND, 3 NC, 4 L/R, 5 CLOCK, 6 DATA. 3.3 V only. 8 mm over the pins. |
 | ESP32-S3 | "ESP32-S3 Development Board DevKitC-1 … WROOM-1", N16R8, headers soldered (item 1005012092039320) | 28 × 64 mm at the widest points, 13 mm over the pins. `board_w` 28, `board_len` 64 (antenna included). `board_angle` 191 (was 195) so the wider header rows clear the charge-module cradle. |
 | OLED | "0.96 inch OLED IIC … SSD1306", white (item 1005006141235306); header GND, VCC, SCL, SDA | `oled_w` 27 (display width), `oled_h` 29 (header edge on top); 11.5 mm over the pins, with 18 mm left behind the PCB for the header and Dupont housings (`oled_pin_room`). `oled_stack` 2.6: the glass stands 1.0 mm above the PCB (measured), PCB taken as 1.6. The active-area offset is still a placeholder (below). |
+| 18650 holder (in the cart) | "1X 18650 Kunststoff-Batterie-Aufbewahrungsbox", 1 slot, 130 mm leads (item 1005012567884640) | `bat_len` 75, `bat_w` 21, `bat_h` 18 from the listing drawing |
+| Charge + 5 V boost module (in the cart) | "5V2A-Lade-Entlade-integriertes Modul Typ-C-Eingang", variant "Not Welded" (item 1005007431366870) | `pm_len` 25, `pm_w` 20 from the listing (25 × 20 × 3); `pm_comp_h` kept at 4. Pads B+/B−, 5V +/−, K. Not an IP5306: a listing for a similar board says the output switches off below about 50 mA, which the ESP32 stays above while recording; leave the loose USB-A socket off |
+| Toggle switch (in the cart) | "Mini MTS-102 3-Pin SPDT ON-ON" (item 1005008144987146) | M6 × 0.75 bushing 8.8 mm long fits the Ø6.2 hole (`sw_d`); body 13.2 × 7.9 × 9.5 mm plus 4 mm pins, checked against the slab and electronics (`clash_switch`). Leave the anti-rotation tab washer off. Wire the middle pin and one outer pin: ON-ON works as on/off |
+| Bubble level (in the cart) | "Mini-Rundnivelliergerät", 15 × 8 mm (item 1005013292329381) | `vial_d` 15, `vial_h` 8 |
 
 ## Placeholders: measure these before printing
 
@@ -143,10 +147,6 @@ Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with cali
 | `oled_win_off`, `oled_win_h` | 0.0, 17 | Offset of the display's active area from the PCB centre (+ = away from the header). The window is 17 mm tall for a ~10.9 mm active area, so an offset of up to ±3 mm still shows the whole display; measure it and you can shrink the window. |
 | `tnut_af`, `tnut_t` | 14.29, 8.33 | Your 3/8"-16 nuts (head and stem) |
 | `tpod_af`, `tpod_t` | 11.11, 5.56 | Your 1/4"-20 nut in the stem base |
-| `vial_d`, `vial_h` | 15, 7 | Your bullseye bubble level |
-| `bat_len`, `bat_w`, `bat_h` | 78, 21, 21 | Your 18650 holder (length, width, height) |
-| `pm_len`, `pm_w`, `pm_comp_h`, `pm_usb_w` | 25, 21, 4, 9 | Your charge module and its USB-C receptacle |
-| `sw_d` | 6.2 | Your toggle switch's thread (M6) |
 | `backrest_t`, `head_up` | 160, 0 | Your sofa: backrest thickness at the top, and ear height relative to the backrest top |
 
 ## Files
@@ -165,3 +165,4 @@ Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with cali
 | v2 | claude-opus-5-5 (review: claude-sonnet-5-5) | 2026-11-23 | After the research report: top flat + groove and a sight bar (laser, bubble level) for aiming; 3/8"-16 nut and a 200 mm stand stem; front notch 1.5 → 0.5 mm; flush OLED cover |
 | v3 | claude-opus-5-5 (review: claude-sonnet-5-5) | 2026-11-23 | Battery bay (18650 holder cradle, charge/boost module, USB-C charge port, toggle switch); sofa hook (saddle + hinged arm); cork fill instead of sand; Bambu projects for the P2S |
 | v3.1 | claude-opus-5-5 | 2026-11-23 | Measured parts: mic pocket for the Ø16.5 × 1 mm carrier (port centred, 14.5 mm header bore); ESP32 cradle for 28 × 64 mm, turned 195° → 191°; OLED outline 27 × 29 mm; listings recorded |
+| v3.2 | claude-opus-5-5 | 2026-11-23 | Power parts from the cart: battery cradle 75 × 21 × 18, module 25 × 20, switch body clash check, bubble level 15 × 8 |
