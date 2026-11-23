@@ -114,17 +114,21 @@ flat_d       = 30;       // flat at the bottom so it sits on a tripod plate
 conduit_id   = 16;       // ear-to-bay wire tube, takes two 3-pin Dupont housings
 conduit_wall = 2.7;      // 6 lines
 
-/* [Microphone carrier — PLACEHOLDERS, measure!] */
-mic_pcb_d       = 15.0;  // PLACEHOLDER carrier PCB diameter
-mic_pcb_t       = 1.6;   // PLACEHOLDER carrier PCB thickness
-mic_port_offset = 0.0;   // PLACEHOLDER acoustic port distance from PCB centre (pocket shifts so
-                         //   the PORT sits on the ear axis)
-mic_ledge       = 1.0;   // seat ring under the PCB rim (must miss the header housings)
+/* [Microphone carrier — measured 2026-11-23] */
+// AliExpress "IM73D122 Digital MEMS Microphone Module" (item 1005013163488519): round PCB, MEMS and two
+// 1x3 SMD headers on the back, acoustic port = the hole through the PCB centre on the front ("R") face.
+mic_pcb_d       = 14.0;  // measured (the two rim notches leave 13 mm across; the pocket stays round)
+mic_pcb_t       = 1.0;   // measured
+mic_port_offset = 0.0;   // port at the PCB centre (listing photo of the front face)
+mic_ledge       = 0.7;   // seat ring under the PCB rim; header rows are ~7.9 mm apart (2.0 mm pitch,
+                         //   estimated from the listing photo), so the bore behind it must stay >= 12.5
 mic_fit         = 0.15;  // diametral slip allowance on the carrier
 
-/* [ESP32-S3 DevKitC-1 clone — PLACEHOLDERS, measure!] */
-board_len    = 69.0;     // PLACEHOLDER (official DevKitC-1 is 62.74; N16R8 clones ~69)
-board_w      = 26.0;     // PLACEHOLDER (official 25.4)
+/* [ESP32-S3 DevKitC-1 clone — identified 2026-11-23] */
+// AliExpress "ESP32-S3 Development Board DevKitC-1 ... WROOM-1" (item 1005012092039320), N16R8, two USB-C
+// (COM + USB), headers soldered pointing down. Measured PCB 26 x 62 mm, 11 mm over the pins.
+board_len    = 69.0;     // envelope: 62 mm PCB + WROOM antenna overhang (~7 mm, estimated from photos)
+board_w      = 26.0;     // measured
 board_t      = 1.6;
 board_comp_h = 3.5;      // tallest part on top (module shield / USB-C)
 board_tol    = 0.4;      // per side, around the outline
@@ -382,7 +386,7 @@ assert(2*rho_seam_out <= bed_xy - 10, "cap footprint exceeds the bed");
 assert(cap_h <= bed_z && 2*s <= bed_z, "part too tall");
 assert(z_f > s + boss_h + 2, "flare starts below the plate bosses: chamber would vanish");
 assert(ceiling_overhang <= 60, "chamber ceiling over 60° sags in PLA");
-assert(mic_hb_d >= 10, "header bore under the carrier < 10 mm: two 3-pin housings won't pass");
+assert(mic_hb_d >= 12.5, "header bore under the carrier < 12.5 mm: the two 1x3 header housings (rows ~7.9 mm apart) won't pass");
 assert(mic_hb_d < mic_cb_d, "seat ring has no width");
 assert(abs(mic_port_offset) <= mic_pcb_d/2 - 1, "port outside the carrier");
 assert(abs(mic_port_offset) + mic_hb_d/2 <= conduit_id/2 + 1.5, "offset header bore no longer meets the conduit");

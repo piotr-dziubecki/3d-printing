@@ -121,17 +121,22 @@ Both microphones share **CLK** and **DATA**; the ESP32-S3 records them as one st
 
 The OLED is I2C (GND, VCC, SCL, SDA on the header at its top edge).
 
+## Measured parts (2026-11-23)
+
+From the parts on hand and their AliExpress listings:
+
+| Part | Listing | Value in the model |
+|---|---|---|
+| Mic carrier | "IM73D122 Digital MEMS Microphone Module" (item 1005013163488519) | `mic_pcb_d` 14.0 (13 across the two rim notches), `mic_pcb_t` 1.0, port at the centre (`mic_port_offset` 0), seat ring `mic_ledge` 0.7 so the bore behind it is 12.6 mm for the two 1×3 headers (rows about 7.9 mm apart, 2.0 mm pitch, estimated from the listing photo). Pins: 1 3.3 V, 2 GND, 3 NC, 4 L/R, 5 CLOCK, 6 DATA. 3.3 V only. |
+| ESP32-S3 | "ESP32-S3 Development Board DevKitC-1 … WROOM-1", N16R8, headers soldered (item 1005012092039320) | PCB 26 × 62 mm measured, 11 mm over the pins; `board_len` 69 covers the antenna overhang (about 7 mm, estimated from photos) |
+| OLED | "0.96 inch OLED IIC … SSD1306", white (item 1005006141235306); header GND, VCC, SCL, SDA | still the placeholders below: the measured 23 × 25 mm doesn't match the usual 27 × 27 mm module, so measure the PCB edge to edge, holes included |
+
 ## Placeholders: measure these before printing
 
 Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with calipers, set the value, re-render and re-export.
 
 | Parameter | Default | What to measure |
 |---|---|---|
-| `mic_pcb_d` | 15.0 | Microphone carrier PCB diameter |
-| `mic_pcb_t` | 1.6 | Carrier PCB thickness |
-| `mic_port_offset` | 0.0 | Distance of the acoustic port from the carrier centre (the pocket shifts so the port sits on the ear axis) |
-| `mic_ledge` | 1.0 | Width of PCB rim free of header housings on the back: the seat ring must not touch them |
-| `board_len`, `board_w` | 69.0, 26.0 | ESP32-S3 board outline (the official DevKitC-1 is 62.74 × 25.4; N16R8 clones are about 69 × 26) |
 | `board_comp_h` | 3.5 | Tallest part on the board's top side |
 | `usb_open_w`, `usb_h` | 24, 3.2 | Span of the USB-C connector(s) across the board end, and receptacle height |
 | — | — | Nothing on the board's underside along its centreline (the board rests on a 4 mm web there) |
@@ -161,3 +166,4 @@ Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with cali
 | v1 | claude-opus-5-5 (final review: claude-fable-5-2) | 2026-11-22 | Initial design: three-part sphere (caps + centre slab), sealed sand chambers, flush mic pockets, ESP32/OLED bay, 1/4"-20 nut, magnet + dowel joints |
 | v2 | claude-opus-5-5 (review: claude-sonnet-5-5) | 2026-11-23 | After the research report: top flat + groove and a sight bar (laser, bubble level) for aiming; 3/8"-16 nut and a 200 mm stand stem; front notch 1.5 → 0.5 mm; flush OLED cover |
 | v3 | claude-opus-5-5 (review: claude-sonnet-5-5) | 2026-11-23 | Battery bay (18650 holder cradle, charge/boost module, USB-C charge port, toggle switch); sofa hook (saddle + hinged arm); cork fill instead of sand; Bambu projects for the P2S |
+| v3.1 | claude-opus-5-5 | 2026-11-23 | Mic pocket set to the measured carrier (Ø14 × 1 mm, port centred, 0.7 mm seat ring, 12.6 mm header bore); ESP32 and mic listings recorded |
