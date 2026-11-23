@@ -6,9 +6,9 @@
 // (shared CLK/DATA, L/R select pin to GND on one mic and VDD on the other) so the two ears
 // share a clock. Used at a listening seat to measure ITD, ILD and IACC for stereo imaging.
 //
-// Physical context: stands on a tripod or mic stand (1/4"-20 nut at the bottom), indoors,
-// static. Loads: its own weight (~0.7 kg empty, ~2.4 kg with the sand chambers full) on the
-// 1/4"-20 nut, and hand forces when opening. An SSD1306 0.96" OLED looks out through a window
+// Physical context: stands on a 200 mm printed stem (3/8"-16 rod into a nut at the bottom; the
+// stem takes a 1/4"-20 tripod screw), indoors, static. Loads: its own weight (~0.7 kg empty,
+// ~2.4 kg with the sand chambers full) on the stem pad and nut, and hand forces when opening. An SSD1306 0.96" OLED looks out through a window
 // on the back; a USB-C cable to an external power bank plugs in through a slot on the back.
 //
 // Design decisions:
@@ -28,7 +28,11 @@
 //     tripod boss, joint tabs) is a prism along X, i.e. vertical walls in print: support-free.
 //   - Joints: 3 mm steel dowel pins locate, 10×3 mm neodymium magnets clamp. No screw or seam
 //     crosses the ear regions; the outer surface has only the two seams, the OLED window and
-//     USB slot (back), the front notch and the bottom flat.
+//     USB slot (back), the 0.5 mm front notch, the top flat + aiming groove and the bottom flat.
+//   - v2 (from the research report in reports/): aiming needs ±1° yaw (9-13 µs ITD per degree),
+//     so a top flat + V groove keys a removable sight bar (pen laser + bubble level); a 3/8"-16
+//     nut and a thin 200 mm stem keep the tripod-head reflection late; a flush cover closes the
+//     OLED window while measuring. 175 mm and ±90° ears were kept (the research supports both).
 //   - Walls 4.5 mm = 10 extrusion lines; caps and slab have 4.5 mm shells, the ear region is solid.
 //
 // Terminology → code:
@@ -44,6 +48,9 @@
 //   "tripod nut"              → tnut_*, tripod_boss(), tripod_cut(); "bottom flat" → flat_d
 //   "joint tabs / magnets / pins" → tab_*, mag_*, pin_*
 //   "front notch"             → notch_*
+//   "aiming groove / sight bar" → sight_flat_d, groove_d, sight_*, laser_v_d, vial_*, sight_bar_*()
+//   "stand stem"              → stem_*, tpod_*, rod_protrude, rod_len, stem()
+//   "OLED cover"              → cover_fit, cover_gap, oled_cover_*()
 //
 // Common modifications:
 //   Measured mic carrier     → mic_pcb_d, mic_pcb_t, mic_port_offset, mic_ledge (asserted: ledge
@@ -52,7 +59,8 @@
 //   Measured OLED module     → oled_w, oled_h, oled_stack, oled_win_*
 //   Different head size      → head_d (keep caps within 256 mm bed: asserted)
 //   Thicker/thinner seams    → slab_half (>= 18 mm: the jumper room under the board is asserted)
-//   1/4"-20 heat-set insert  → set tnut_af/tnut_t to the insert's OD/length (or use a nut)
+//   Other head thread        → tnut_af/tnut_t/tbolt_d (3/8"-16 default; asserted >= 3 mm boss wall)
+//   Your bubble level        → vial_d, vial_h; longer stem → stem_h (rod_len is echoed)
 //   Steeper chamber ceiling  → ceiling_overhang (55° default; above ~60° the PLA ceiling sags)
 //
 // Overall dimensions: sphere Ø175; caps 170.3 × 170.3 × 67.5 mm (print), slab 170.3 × 170.3 × 40 mm
@@ -62,6 +70,7 @@
 //   the slab's X becomes Z (left face on Z=0).
 // NOTE: printed parts are modelled in print orientation (cap_right, cap_left, slab, fill_plug).
 // Final review: 2026-11-22, claude-fable-5-2 (after a claude-sonnet-5-5 review); findings fixed.
+//   v2 changes reviewed 2026-11-23 on claude-sonnet-5-5.
 
 // === PRINT SETTINGS ===
 // Material: PLA (stiff — less shell vibration than PETG, best dimensional accuracy, indoor use).
@@ -73,7 +82,8 @@
 // Supports: None. Caps: dome outside has no overhang; the sealed chamber ceiling is <= 55° and
 //   invisible. Slab: every internal feature is a vertical prism; window/USB tops are bridges
 //   (OLED window 21 mm, USB slot 24 mm). The gate's overhang report on the caps is that interior chamber ceiling.
-// Orientation: as modelled. Caps seam face down (ear up), slab left face down, plug flange down.
+// Orientation: as modelled. Caps seam face down (ear up), slab left face down, plug flange down,
+//   sight bar top face down, stem upright (base down), OLED cover inner face down.
 // Notes: PLA 200-220 °C (Bambu PLA Basic preset 220) / bed 60 °C. Brim not needed (full-disc footprint on caps). The caps are
 //   hollow sealed chambers: do not enable "remove small gaps" or anything that fills cavities.
 
@@ -147,17 +157,17 @@ fill_r       = 45;
 fill_angle   = 90;
 
 /* [Tripod] */
-tnut_af      = 11.11;    // 1/4"-20 hex nut across flats (7/16")
-tnut_t       = 5.56;     // nut thickness (7/32")
-tbolt_d      = 6.35;     // 1/4"
-tnut_floor   = 2.0;      // plastic under the nut (thin: camera screws protrude only ~4.5-6 mm)
+tnut_af      = 14.29;    // 3/8"-16 hex nut across flats (9/16"), the measurement-head standard
+tnut_t       = 8.33;     // nut thickness (21/64")
+tbolt_d      = 9.525;    // 3/8"; 1/4"-20 tripods use a 3/8"->1/4" brass reducer bushing in the nut
+tnut_floor   = 2.0;      // plastic under the nut (the bushing or stem rod passes through it)
 tbolt_extra  = 8.0;      // bore above the nut for long tripod screws
 tboss_w      = 24;       // boss width (Y)
 tboss_h      = 26;       // boss height (Z) above the flat
 
 /* [Front notch] */
 notch_len    = 16;       // along X
-notch_depth  = 1.5;
+notch_depth  = 0.5;      // 90° V, 1 mm wide: a faint mark, least disturbance in the forward field (was 1.5)
 
 /* [Pry notches] */
 pry_angle    = 225;      // bottom-back, on both seams
@@ -165,8 +175,39 @@ pry_w        = 10;
 pry_depth    = 2.0;
 pry_h        = 2.0;      // along X into the slab
 
+/* [Sight (top): aiming groove and sight bar] */
+sight_flat_d = 30;       // flat on top of the slab that the sight bar sits on
+groove_d     = 1.0;      // 90° V groove along Y on the flat (width 2 × groove_d), keys the bar
+sight_len    = 70;       // bar along Y
+sight_w      = 54;       // bar along X
+sight_t      = 6;        // bar thickness
+laser_v_d    = 4.0;      // 90° V cradle along Y on top of the bar (pen lasers up to ~Ø14)
+vial_d       = 15.0;     // PLACEHOLDER bullseye bubble level diameter
+vial_h       = 7.0;      // PLACEHOLDER bullseye level height
+vial_x       = 17.0;     // vial pocket centre, clear of the largest laser
+laser_d_max  = 14;       // largest pen laser the cradle takes (rests on the cradle edges above ~Ø11)
+
+/* [Stand stem] */
+stem_h       = 200;      // stem length (tripod plate to head flat); >= 150 pushes the tripod-head reflection past ~1 ms
+stem_d       = 16;       // thin shaft
+stem_pad_d   = 24;       // top pad under the head's bottom flat (flat_d = 30)
+stem_pad_h   = 3;
+stem_base_d  = 34;
+stem_base_h  = 26;       // holds the 1/4"-20 tripod nut and the 3/8"-16 rod nut
+tpod_af      = 11.11;    // 1/4"-20 nut for the tripod screw (7/16")
+tpod_t       = 5.56;
+tpod_d       = 6.35;
+rod_protrude = 13.5;     // 3/8"-16 rod above the pad, into the head nut (through it, with margin for the cut)
+
+/* [OLED cover] */
+cover_fit    = 0.15;     // clearance on the window walls
+cover_gap    = 0.5;      // air above the OLED glass
+cover_flare_gap = 0.05;  // deliberate clearance on the flares, so the cover can be lifted out
+cover_pry_w  = 4;        // fingernail notch at the cover's +X edge
+cover_pry_d  = 0.8;
+
 /* [Render] */
-part = "all"; // ["all", "explode", "section", "cap_right", "cap_left", "slab", "fill_plug", "clash_cap_slab_r", "clash_cap_slab_l", "clash_board", "clash_oled", "check_chamber"]
+part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_cap_slab_r", "clash_cap_slab_l", "clash_board", "clash_oled", "check_chamber"]
 
 // === DERIVED CONSTANTS ===
 extrusion_width = nozzle_diameter * 1.125;   // 0.45
@@ -229,6 +270,31 @@ tnut_z0  = z_flat + tnut_floor;
 tnut_ac  = (tnut_af + hole_comp + 0.1) / cos(30);
 tbolt_hole = tbolt_d + hole_comp + 0.30;
 
+// sight (top flat at z_top; groove along Y)
+z_top     = sqrt(R*R - pow(sight_flat_d/2, 2));
+groove_len = sight_flat_d - 2;
+rib_d     = groove_d - 0.1;   
+// laser centre height: on the V flanks if it fits inside the cradle, else on the cradle edges
+laser_z   = laser_d_max/2/sqrt(2) <= laser_v_d ? sight_t - laser_v_d + laser_d_max/2*sqrt(2)
+                                               : sight_t + sqrt(pow(laser_d_max/2, 2) - pow(laser_v_d, 2));   // ~±0.25° yaw play over the rib length
+
+// stem (print = use orientation, Z up, base on the bed)
+tpod_ac   = (tpod_af + hole_comp + 0.1) / cos(30);
+rod_ac    = (tnut_af + hole_comp + 0.1) / cos(30);
+tpod_z0   = tnut_floor;
+rod_nut_z0 = tpod_z0 + tpod_t + tolerance + 3;
+rod_hole  = tbolt_d + hole_comp + 0.30;
+tpod_hole = tpod_d + hole_comp + 0.30;
+rod_len   = stem_h - rod_nut_z0 + rod_protrude;
+
+// OLED cover: window walls shrunk by cover_fit, seated deeper by cover_seat on the flares
+oled_win_c = oled_x0 + oled_tol + oled_w/2;
+win_dr     = R + 1 - oled_face_r;
+cover_seat = (cover_fit - cover_flare_gap) * win_dr / oled_win_flare;
+cover_edge_t = sqrt(R*R - pow(abs(oled_win_c) + oled_win_w/2, 2)
+                    - pow(abs(oled_win_off) + oled_win_h/2 + oled_win_flare*(R - oled_face_r)/win_dr, 2))
+               - (oled_face_r + cover_gap);
+
 // === CONTRACTS ===
 assert(abs(wall - 4.5) < 1e-6, "shell must be 4.5 mm (10 lines)");
 assert(2*rho_seam_out <= bed_xy - 10, "cap footprint exceeds the bed");
@@ -254,11 +320,23 @@ assert(mag_r + mag_hole/2 < rho_seam_in - 1, "magnet pocket breaks the band");
 assert(pin_r - pin_hole_slide/2 > tab_r_in + 1.5, "pin breaks the tab inner face");
 assert(fill_r + fill_hole/2 < tab_r_in - 3 && fill_r - fill_hole/2 > r_to + 3, "fill port position");
 assert(tnut_z0 + tnut_t + tbolt_extra < z_flat + tboss_h - 3, "tripod bore leaves the boss");
+assert(tnut_af + hole_comp + 6 <= tboss_w, "nut leaves < 3 mm boss wall each side");
+assert(rod_protrude <= tnut_floor + tnut_t + tbolt_extra - 1 && rod_protrude >= tnut_floor + tnut_t + tolerance + 1.5,
+       "stem rod must engage the head nut without bottoming");
+assert(groove_d <= 1.0, "sight groove deeper than 1 mm");
+assert(R - z_top + groove_d <= wall - 2, "top flat + groove leave < 2 mm shell");
+assert(vial_x + vial_d/2 + 0.2 + 1.8 <= sight_w/2 && vial_x - vial_d/2 - 0.2 >= laser_d_max/2 + 1, "vial pocket hits the laser or the bar edge");
+assert(stem_pad_d <= flat_d - 2, "stem pad larger than the head's bottom flat");
+assert(stem_d - rod_hole >= 2*4*extrusion_width, "stem wall < 4 lines");
+assert(rod_ac + 6 <= stem_base_d && tpod_ac + 6 <= stem_base_d, "nut slot leaves thin base walls");
+assert(rod_nut_z0 + tnut_t + tolerance + 3 <= stem_base_h, "rod nut leaves the base");
+assert(cover_edge_t >= 1.2, "OLED cover too thin at its corner");
 
 echo(seam_outer_d = 2*rho_seam_out, cap_h = cap_h, flare_start_z = z_f, flare_meet = [rho_m, z_m]);
 echo(mic_face_below_pole = R - mic_face_z, mic_counterbore = mic_cb_d, header_bore = mic_hb_d);
 echo(board_x0 = board_x0, board_top = board_top, board_end_r = board_end, board_in_r = board_in,
      usb_depth_from_surface = R - board_end, jumper_room = board_x0 + s);
+echo(rod_len = rod_len, cover_seat = cover_seat, cover_edge_t = cover_edge_t, top_flat_depth = R - z_top);
 echo(oled_x_range = [oled_x0, oled_x0 + oled_w + 2*oled_tol], oled_min_wall = oled_min_wall);
 
 // === HELPERS ===
@@ -422,11 +500,71 @@ module slab_head() difference() {
     // pry notches: shallow recesses in the slab rim at both seams, bottom-back (far from the ears)
     for (sx = [-1, 1]) polar(pry_angle)
         prism(rho_seam_out - pry_depth, R + 1, -pry_w/2, pry_w/2, sx > 0 ? s - pry_h : -s - 1, sx > 0 ? s + 1 : -s + pry_h);
+    // top flat + 90° V groove along Y: seat and yaw key for the sight bar (median plane, 90° from both ears)
+    translate([-s - 1, -R - 1, z_top]) cube([2*s + 2, 2*R + 2, 10]);
+    translate([0, -groove_len/2, z_top]) rotate([-90, 0, 0])
+        linear_extrude(height = groove_len) polygon([[-groove_d - 1, -1], [groove_d + 1, -1], [0, groove_d]]);
     // front notch: small V groove at the front centre, along X
     translate([-notch_len/2, R - notch_depth, 0]) rotate([0, 90, 0])
-        linear_extrude(height = notch_len) polygon([[-notch_depth*1.2, 2], [0, 0], [notch_depth*1.2, 2]]);
+        linear_extrude(height = notch_len) polygon([[-notch_depth - 1, 1 + notch_depth], [notch_depth + 1, 1 + notch_depth], [0, 0]]);
 }
 module slab_print() translate([0, 0, s]) rotate([0, -90, 0]) slab_head();
+
+// === SIGHT BAR (G1) ===
+// use frame: bottom face on z = 0, rib down, laser cradle and vial pocket on top
+module sight_bar_local() difference() {
+    union() {
+        translate([-sight_w/2, -sight_len/2, 0]) cube([sight_w, sight_len, sight_t]);
+        translate([0, -(groove_len - 4)/2, fudge]) rotate([-90, 0, 0])   // V rib into the head groove
+            linear_extrude(height = groove_len - 4) polygon([[-rib_d, 0], [rib_d, 0], [0, rib_d]]);
+    }
+    translate([0, -sight_len/2 - 1, sight_t]) rotate([-90, 0, 0])      // 90° laser cradle, open both ends
+        linear_extrude(height = sight_len + 2) polygon([[-laser_v_d - 1, -1], [laser_v_d + 1, -1], [0, laser_v_d]]);
+    translate([vial_x, 0, sight_t - vial_h*0.6]) cylinder(d = vial_d + 0.4, h = vial_h);
+    translate([vial_x, 0, sight_t - ef_chamfer]) cylinder(d1 = vial_d + 0.4, d2 = vial_d + 0.4 + 2*ef_chamfer + fudge, h = ef_chamfer + fudge);
+}
+module sight_bar_head() translate([0, 0, z_top]) sight_bar_local();
+module sight_bar_print() translate([0, 0, sight_t]) rotate([180, 0, 0]) sight_bar_local();   // top face on the bed
+
+// === STAND STEM (G2) ===
+// print = use orientation. A 3/8"-16 rod (rod_len) runs through it into the head nut; a 1/4"-20 nut
+// in the base takes the tripod screw. Both nuts drop into side slots from +X.
+module stem() difference() {
+    union() {
+        translate([0, 0, ef_chamfer]) cylinder(d = stem_base_d, h = stem_base_h - ef_chamfer);
+        cylinder(d1 = stem_base_d - 2*ef_chamfer, d2 = stem_base_d, h = ef_chamfer + fudge);
+        translate([0, 0, stem_base_h - fudge]) cylinder(d1 = stem_base_d, d2 = stem_d, h = (stem_base_d - stem_d)/2);
+        cylinder(d = stem_d, h = stem_h - stem_pad_h - (stem_pad_d - stem_d)/2 + fudge);
+        translate([0, 0, stem_h - stem_pad_h - (stem_pad_d - stem_d)/2])
+            cylinder(d1 = stem_d, d2 = stem_pad_d, h = (stem_pad_d - stem_d)/2 + fudge);
+        translate([0, 0, stem_h - stem_pad_h]) cylinder(d = stem_pad_d, h = stem_pad_h);
+    }
+    translate([0, 0, -fudge]) cylinder(d = tpod_hole, h = rod_nut_z0);
+    translate([0, 0, -fudge]) cylinder(d1 = tpod_hole + 2*ef_chamfer, d2 = tpod_hole, h = ef_chamfer + fudge);
+    translate([0, 0, rod_nut_z0]) cylinder(d = rod_hole, h = stem_h);
+    hull() for (x = [0, stem_base_d]) translate([x, 0, tpod_z0]) cylinder(d = tpod_ac, h = tpod_t + tolerance, $fn = 6);
+    hull() for (x = [0, stem_base_d]) translate([x, 0, rod_nut_z0]) cylinder(d = rod_ac, h = tnut_t + tolerance, $fn = 6);
+}
+
+// === OLED COVER (G4) ===
+module oled_cover_local(shrink) {   // polar frame of oled_angle, seated
+    hw = oled_win_h/2 - shrink; k = oled_win_flare; c = oled_win_c; xw = oled_win_w/2 - shrink;
+    intersection() {
+        translate([0, -cover_seat, 0]) hull() {
+            prism(oled_face_r - fudge, oled_face_r, oled_win_off - hw, oled_win_off + hw, c - xw, c + xw);
+            prism(R + 1 - fudge, R + 1, oled_win_off - hw - k, oled_win_off + hw + k, c - xw, c + xw);
+        }
+        sphere(r = R, $fn = fn_big);
+        prism(oled_face_r + cover_gap, R + 1, -R, R, -R, R);
+    }
+}
+module oled_cover_part(shrink) difference() {   // seated cover with the fingernail notch at +X
+    oled_cover_local(shrink);
+    prism(R - cover_pry_d, R + 2, oled_win_off - cover_pry_w/2, oled_win_off + cover_pry_w/2,
+          oled_win_c + oled_win_w/2 - shrink - cover_pry_d, oled_win_c + oled_win_w/2 + 1);
+}
+module oled_cover_head() polar(oled_angle) oled_cover_part(cover_fit);
+module oled_cover_print() translate([0, 0, -(oled_face_r + cover_gap)]) rotate([90, 0, 0]) oled_cover_part(cover_fit);
 
 // === FILL PLUG ===
 module fill_plug() {
@@ -457,15 +595,28 @@ module assembly(gap = 0) {
     color("wheat") slab_head();
     color("green") board_dummy();
     color("black") oled_dummy();
+    color("tan") oled_cover_head();
+    color("orange") translate([0, 0, gap/2]) sight_bar_head();
 }
 
 if (part == "all")      assembly();
 if (part == "explode")  assembly(60);
 if (part == "section")  difference() { assembly(); translate([-R-1, -R-1, 0]) cube([2*R+2, 2*R+2, R+1]); }
+if (part == "view_stand") { assembly(); translate([0, 0, z_flat - stem_h]) stem();
+                           color("silver") translate([0, 0, z_flat - stem_h + rod_nut_z0]) cylinder(d = tbolt_d, h = rod_len); }
 if (part == "cap_right") cap_right_print();
 if (part == "cap_left")  cap_left_print();
 if (part == "slab")      slab_print();
 if (part == "fill_plug") fill_plug();
+if (part == "sight_bar") sight_bar_print();
+if (part == "stem")      stem();
+if (part == "oled_cover") oled_cover_print();
+if (part == "clash_sight") intersection() { slab_head(); translate([0, 0, fudge]) sight_bar_head(); }
+if (part == "clash_cover") intersection() { slab_head(); polar(oled_angle) translate([0, fudge, 0]) oled_cover_part(cover_fit); }
+if (part == "clash_laser") intersection() {   // largest laser resting in the cradle vs the bubble level
+    translate([vial_x, 0, sight_t - vial_h*0.6]) cylinder(d = vial_d, h = vial_h);
+    translate([0, -sight_len/2, laser_z]) rotate([-90, 0, 0]) cylinder(d = laser_d_max, h = sight_len);
+}
 if (part == "clash_cap_slab_r") intersection() { translate([fudge, 0, 0]) cap_right_head(); slab_head(); }
 if (part == "clash_cap_slab_l") intersection() { translate([-fudge, 0, 0]) cap_left_head(); slab_head(); }
 if (part == "clash_board") intersection() { slab_head(); board_dummy(); }
