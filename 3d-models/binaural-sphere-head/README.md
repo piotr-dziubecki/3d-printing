@@ -4,7 +4,9 @@ A 175 mm sphere that stands in for a head at a listening seat. Two Infineon IM73
 
 It runs from an 18650 cell inside the head, so it needs no cable while measuring, and it stands either on a 200 mm stem on a tripod or on a printed hook over a sofa backrest, where the listener's head would be. Every part prints on a Bambu Lab P2S (or any 256 × 256 × 256 mm printer) without supports.
 
-![assembly, exploded](preview-exploded.png)
+![assembly, exploded](preview-exploded-colour.png)
+
+![inside, right cap off: ESP32-S3 (green), 18650 (red), charge module (purple), OLED (black), mic carrier (gold)](preview-inside-right.png)
 
 ## Parts
 

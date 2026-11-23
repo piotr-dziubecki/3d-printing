@@ -260,7 +260,7 @@ mbolt_len    = 38.1;     // 3/8"-16 x 1-1/2" hex bolt (shank length)
 jam_t        = 8.33;     // 3/8"-16 jam / thumb nut between the arm pad and the head's flat
 
 /* [Render] */
-part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_power", "clash_power_board", "hook_saddle", "hook_arm", "view_sofa", "clash_cap_slab_r", "clash_cap_slab_l", "clash_board", "clash_oled", "check_chamber"]
+part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_power", "clash_power_board", "hook_saddle", "hook_arm", "view_sofa", "view_inside", "view_inside_l", "clash_cap_slab_r", "clash_cap_slab_l", "clash_board", "clash_oled", "check_chamber"]
 
 // === DERIVED CONSTANTS ===
 extrusion_width = nozzle_diameter * 1.125;   // 0.45
@@ -722,6 +722,10 @@ module oled_dummy() polar(oled_angle) {
 
 module bat_dummy() polar(bat_angle)
     prism(bat_r_in + bat_tol, bat_r_in + bat_tol + bat_w, -bat_len/2, bat_len/2, bat_x0 + fudge, bat_x0 + bat_h);
+// mic carrier PCBs, flush at the ear poles (view only)
+module mic_dummy() for (sx = [-1, 1])
+    translate([sx*(mic_face_z - mic_pcb_t/2), 0, 0]) rotate([0, 90, 0]) translate([mic_port_offset, 0, 0])
+        cylinder(d = mic_pcb_d, h = mic_pcb_t, center = true);
 module pm_dummy() polar(pm_angle) {
     y0 = pm_in + pm_tol; y1 = pm_end - pm_tol + 0.3;
     prism(y0, y1, -pm_w/2, pm_w/2, pm_x0 + fudge, pm_x0 + pm_t);
@@ -784,6 +788,18 @@ module assembly(gap = 0) {
     color("orange") translate([0, 0, gap/2]) sight_bar_head();
 }
 
+// colour view with the shells see-through, to show the electronics inside
+module electronics() {
+    color("green") board_dummy(); color("red") bat_dummy(); color("purple") pm_dummy();
+    color("black") oled_dummy(); color("gold") mic_dummy();
+}
+// colour views with one cap left off, to show the electronics in the bay
+if (part == "view_inside" || part == "view_inside_l") {
+    electronics();
+    color("wheat") slab_head();
+    color("orange") sight_bar_head();
+    color("lightsteelblue") if (part == "view_inside") cap_left_head(); else cap_right_head();
+}
 if (part == "all")      assembly();
 if (part == "explode")  assembly(60);
 if (part == "section")  difference() { assembly(); translate([-R-1, -R-1, 0]) cube([2*R+2, 2*R+2, R+1]); }
