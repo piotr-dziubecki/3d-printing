@@ -164,6 +164,7 @@ Each is a parameter at the top of `binaural_sphere_head.scad`. Measure with cali
 - `bambu/`: Bambu Studio projects for the P2S with the settings above.
 - `preview-*.png`: renders.
 - `reports/Binaural sphere head design research.md`: the literature and product research behind v2, with the measurement procedure; `research_notes/` holds the sourced notes and the rigid-sphere scripts (`sphere.py`, `itd.py`).
+- `research_notes/sourcing-2026-11.md`: where the remaining parts were bought, and why those listings.
 
 ## Design history
 
