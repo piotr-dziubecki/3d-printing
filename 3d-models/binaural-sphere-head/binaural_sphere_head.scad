@@ -114,31 +114,35 @@ flat_d       = 30;       // flat at the bottom so it sits on a tripod plate
 conduit_id   = 16;       // ear-to-bay wire tube, takes two 3-pin Dupont housings
 conduit_wall = 2.7;      // 6 lines
 
-/* [Microphone carrier — PLACEHOLDERS, measure!] */
-mic_pcb_d       = 15.0;  // PLACEHOLDER carrier PCB diameter
-mic_pcb_t       = 1.6;   // PLACEHOLDER carrier PCB thickness
-mic_port_offset = 0.0;   // PLACEHOLDER acoustic port distance from PCB centre (pocket shifts so
-                         //   the PORT sits on the ear axis)
-mic_ledge       = 1.0;   // seat ring under the PCB rim (must miss the header housings)
+/* [Microphone carrier — measured 2026-11-23] */
+// AliExpress "IM73D122 Digital MEMS Microphone Module" (item 1005013163488519): round PCB, MEMS and two
+// 1x3 SMD headers on the back, acoustic port = the hole through the PCB centre on the front ("R") face.
+mic_pcb_d       = 16.5;  // measured (the two rim notches leave 15 mm across; the pocket stays round)
+mic_pcb_t       = 1.0;   // measured
+mic_port_offset = 0.0;   // port at the PCB centre (listing photo of the front face)
+mic_ledge       = 1.0;   // seat ring under the PCB rim; header rows are ~9.3 mm apart (2.54 mm pitch,
+                         //   scaled from the listing photo), so the Dupont housings need a bore >= 14.2
 mic_fit         = 0.15;  // diametral slip allowance on the carrier
 
-/* [ESP32-S3 DevKitC-1 clone — PLACEHOLDERS, measure!] */
-board_len    = 69.0;     // PLACEHOLDER (official DevKitC-1 is 62.74; N16R8 clones ~69)
-board_w      = 26.0;     // PLACEHOLDER (official 25.4)
+/* [ESP32-S3 DevKitC-1 clone — identified 2026-11-23] */
+// AliExpress "ESP32-S3 Development Board DevKitC-1 ... WROOM-1" (item 1005012092039320), N16R8, two USB-C
+// (COM + USB), headers soldered pointing down. Measured 28 x 64 mm at the widest points, 13 mm over the pins.
+board_len    = 64.0;     // measured, antenna included
+board_w      = 28.0;     // measured at the widest point
 board_t      = 1.6;
 board_comp_h = 3.5;      // tallest part on top (module shield / USB-C)
 board_tol    = 0.4;      // per side, around the outline
 board_web_t  = 4.05;     // web under the board, 9 lines
-board_angle  = 195;      // direction of the USB end in the Y-Z plane: 0 front, 90 up, 180 back
+board_angle  = 191;      // direction of the USB end in the Y-Z plane: 0 front, 90 up, 180 back
 board_jumper_room = 22;  // header plastic 2.5 + Dupont housing 14 + bend, under the PCB
 usb_open_w   = 24;       // slot across the board end (covers both USB-C on dual-port clones)
 usb_open_h   = 9;        // slot height along X
 usb_h        = 3.2;      // USB-C receptacle height (centre = PCB top + usb_h/2)
 
-/* [SSD1306 0.96" OLED — PLACEHOLDERS, measure!] */
-oled_w       = 27.3;     // PLACEHOLDER module width (display long axis), along X
-oled_h       = 27.8;     // PLACEHOLDER module height (header edge on top)
-oled_stack   = 3.0;      // PLACEHOLDER glass + tape + PCB thickness
+/* [SSD1306 0.96" OLED — measured 2026-11-23 except the window offset] */
+oled_w       = 27.0;     // measured module width (display long axis), along X
+oled_h       = 29.0;     // measured module height (header edge on top)
+oled_stack   = 2.6;      // glass stands 1.0 above the PCB (measured) + PCB taken as 1.6 (thickest usual)
 oled_win_w   = 24;       // window along X (active area ~21.7)
 oled_win_h   = 17;       // window height (active area ~10.9; tall so an unmeasured offset still shows it all)
 oled_win_flare = 4.0;    // tangential widening per side at the surface (keeps the top bridge <= 21 mm)
@@ -147,6 +151,7 @@ oled_angle   = 155;      // module centre direction in the Y-Z plane (back, 25°
 oled_face_r  = 82.5;     // radius of the flat the glass presses against
 oled_tol     = 0.3;
 oled_lip     = 2.0;      // lip behind the bottom edge of the OLED PCB
+oled_pin_room = 18;      // behind the PCB: 11.5 mm over the pins measured (stack ~3 + header) + Dupont housings and bend
 
 /* [Joint] */
 tab_angles   = [10, 70, 120, 240, 300];
@@ -160,8 +165,8 @@ pin_len      = 12;
 pin_r        = 63;       // dowel centre radius
 
 /* [Fill port] */
-fill_d       = 14;
-fill_r       = 45;
+fill_d       = 30;       // wide enough for 5-10 mm cork granulate (Ø14 bridged on 10 mm grains)
+fill_r       = 36;       // port centre radius on the cap plate: clear of the conduit and the tab ring
 fill_angle   = 90;
 
 /* [Tripod] */
@@ -190,8 +195,8 @@ sight_len    = 70;       // bar along Y
 sight_w      = 54;       // bar along X
 sight_t      = 6;        // bar thickness
 laser_v_d    = 4.0;      // 90° V cradle along Y on top of the bar (pen lasers up to ~Ø14)
-vial_d       = 15.0;     // PLACEHOLDER bullseye bubble level diameter
-vial_h       = 7.0;      // PLACEHOLDER bullseye level height
+vial_d       = 15.0;     // bullseye bubble level diameter
+vial_h       = 8.0;      // bullseye level height (cart: 15 x 8 mm, item 1005013292329381)
 vial_x       = 17.0;     // vial pocket centre, clear of the largest laser
 laser_d_max  = 14;       // largest pen laser the cradle takes (rests on the cradle edges above ~Ø11)
 
@@ -215,20 +220,20 @@ cover_flare_gap = 0.05;  // deliberate clearance on the flares, so the cover can
 cover_pry_w  = 4;        // fingernail notch at the cover's +X edge
 cover_pry_d  = 0.8;
 
-/* [Battery — PLACEHOLDERS, measure!] */
+/* [Battery and power — from the AliExpress cart listings, 2026-11-23] */
 // one 18650 cell in a single-cell holder, lying as a chord in the front-lower slab, slid in from the
 // right seam face and held by the right cap plate (like the OLED)
-bat_len      = 78;       // PLACEHOLDER holder length (tangential)
-bat_w        = 21;       // PLACEHOLDER holder width (radial)
-bat_h        = 21;       // PLACEHOLDER holder height (along X)
+bat_len      = 75;       // holder length (tangential); listing drawing 75 x 21 x 18, item 1005012567884640
+bat_w        = 21;       // holder width (radial)
+bat_h        = 18;       // holder height (along X)
 bat_tol      = 0.4;
 bat_angle    = 335;      // chord centre direction (front, 25° down): corners fall between the tabs at 300 and 10
 bat_r_in     = 16;       // inner (radial) face of the holder; keeps the conduit mouths free
 // charge + 5 V boost module (USB-C in, 5 V out to the ESP32 5V pin), PCB lying flat (thickness along X)
-pm_len       = 25;       // PLACEHOLDER module length (radial, USB-C at the outer end)
-pm_w         = 21;       // PLACEHOLDER module width (tangential)
+pm_len       = 25;       // module length (radial, USB-C at the outer end); listing 25 x 20 x 3, item 1005007431366870
+pm_w         = 20;       // module width (tangential)
 pm_t         = 1.6;      // PCB thickness
-pm_comp_h    = 4.0;      // PLACEHOLDER tallest part on top (USB-C receptacle ~3.2)
+pm_comp_h    = 4.0;      // tallest part on top; kept at 4 (listing says 3 mm overall, USB-C receptacle ~3.2)
 pm_usb_w     = 9.0;      // USB-C receptacle width (tangential)
 pm_usb_h     = 3.2;      // receptacle height (centre = PCB top + pm_usb_h/2)
 pm_angle     = 223;      // back-bottom, between the ESP32 jumpers and the tab at 240
@@ -238,6 +243,8 @@ sw_d         = 6.2;      // panel toggle switch thread (M6 mini toggle); hole al
 sw_angle     = 223;
 sw_x         = 7.0;      // switch position along X (beside the charge port)
 sw_spot_d    = 12;       // flat spot-face for the switch nut
+// MTS-102 mini toggle (item 1005008144987146): bushing M6x0.75 x 8.8, body 13.2 x 7.9 x 9.5, pins 4
+sw_body      = [13.2, 7.9, 9.5 + 4];   // tangential, along X, radial depth incl. pins (clash check only)
 
 /* [Sofa hook] */
 // use frame: Y forward (toward the speakers), Z up, origin = front-top edge of the backrest
@@ -260,7 +267,7 @@ mbolt_len    = 38.1;     // 3/8"-16 x 1-1/2" hex bolt (shank length)
 jam_t        = 8.33;     // 3/8"-16 jam / thumb nut between the arm pad and the head's flat
 
 /* [Render] */
-part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_power", "clash_power_board", "hook_saddle", "hook_arm", "view_sofa", "view_inside", "view_inside_l", "clash_cap_slab_r", "clash_cap_slab_l", "clash_board", "clash_oled", "check_chamber"]
+part = "all"; // ["all", "explode", "section", "view_stand", "cap_right", "cap_left", "slab", "fill_plug", "sight_bar", "stem", "oled_cover", "clash_sight", "clash_cover", "clash_laser", "clash_power", "clash_power_board", "clash_switch", "hook_saddle", "hook_arm", "view_sofa", "view_inside", "view_inside_l", "clash_cap_slab_r", "clash_cap_slab_l", "clash_fill_plug", "clash_board", "clash_oled", "check_chamber"]
 
 // === DERIVED CONSTANTS ===
 extrusion_width = nozzle_diameter * 1.125;   // 0.45
@@ -382,7 +389,7 @@ assert(2*rho_seam_out <= bed_xy - 10, "cap footprint exceeds the bed");
 assert(cap_h <= bed_z && 2*s <= bed_z, "part too tall");
 assert(z_f > s + boss_h + 2, "flare starts below the plate bosses: chamber would vanish");
 assert(ceiling_overhang <= 60, "chamber ceiling over 60° sags in PLA");
-assert(mic_hb_d >= 10, "header bore under the carrier < 10 mm: two 3-pin housings won't pass");
+assert(mic_hb_d >= 14.2, "header bore under the carrier < 14.2 mm: the two 1x3 Dupont housings (rows ~9.3 mm apart) won't pass");
 assert(mic_hb_d < mic_cb_d, "seat ring has no width");
 assert(abs(mic_port_offset) <= mic_pcb_d/2 - 1, "port outside the carrier");
 assert(abs(mic_port_offset) + mic_hb_d/2 <= conduit_id/2 + 1.5, "offset header bore no longer meets the conduit");
@@ -503,6 +510,8 @@ module cap_local() difference() {
     translate(concat(cap_uv(fill_r, fill_angle), [s - fudge])) cylinder(d1 = fill_hole + 2*ef_chamfer, d2 = fill_hole, h = ef_chamfer + fudge);
 }
 module cap_right_head() rotate([0, 90, 0]) cap_local();
+// fill plug seated in the right cap's port, flange on the seam face (assembled pose)
+module fill_plug_head() rotate([0, 90, 0]) translate(concat(cap_uv(fill_r, fill_angle), [s - 1.6])) fill_plug();
 module cap_left_head()  mirror([1, 0, 0]) cap_right_head();
 module cap_right_print() translate([0, 0, -s]) cap_local();
 module cap_left_print()  mirror([1, 0, 0]) cap_right_print();
@@ -700,7 +709,7 @@ module oled_cover_print() translate([0, 0, -(oled_face_r + cover_gap)]) rotate([
 
 // === FILL PLUG ===
 module fill_plug() {
-    stem = fill_d - 0.1;   // slip into the (compensated) Ø14 hole; silicone seals it
+    stem = fill_d - 0.1;   // slip into the (compensated) hole; silicone seals it
     cylinder(d = fill_d + 6, h = 1.6);
     translate([0, 0, 1.6 - fudge]) cylinder(d = stem, h = plate_t - 0.7);
     translate([0, 0, 1.6 + plate_t - 0.7 - 3*fudge]) cylinder(d1 = stem, d2 = stem - 1, h = 0.5);   // lead-in
@@ -717,7 +726,7 @@ module board_dummy() polar(board_angle) {
 module oled_dummy() polar(oled_angle) {
     hp = oled_h/2;
     prism(oled_face_r - oled_stack - fudge, oled_face_r - fudge, -hp, hp, oled_x0 + oled_tol, oled_x0 + oled_tol + oled_w);
-    prism(oled_back - 16, oled_back, -hp + 0.3, -hp + 3.0, oled_x0 + oled_tol + 6, oled_x0 + oled_tol + oled_w - 6);   // header + Dupont
+    prism(oled_back - oled_pin_room, oled_back, -hp + 0.3, -hp + 3.0, oled_x0 + oled_tol + 6, oled_x0 + oled_tol + oled_w - 6);   // header + Dupont
 }
 
 module bat_dummy() polar(bat_angle)
@@ -726,6 +735,10 @@ module bat_dummy() polar(bat_angle)
 module mic_dummy() for (sx = [-1, 1])
     translate([sx*(mic_face_z - mic_pcb_t/2), 0, 0]) rotate([0, 90, 0]) translate([mic_port_offset, 0, 0])
         cylinder(d = mic_pcb_d, h = mic_pcb_t, center = true);
+module sw_dummy() polar(pm_angle) {   // toggle body inside the band, 0.5 mm off the wall (washer/curvature)
+    r1 = rho_in_at(sw_x + sw_body[1]/2) - 0.5;
+    prism(r1 - sw_body[2], r1, -sw_body[0]/2, sw_body[0]/2, sw_x - sw_body[1]/2, sw_x + sw_body[1]/2);
+}
 module pm_dummy() polar(pm_angle) {
     y0 = pm_in + pm_tol; y1 = pm_end - pm_tol + 0.3;
     prism(y0, y1, -pm_w/2, pm_w/2, pm_x0 + fudge, pm_x0 + pm_t);
@@ -791,7 +804,7 @@ module assembly(gap = 0) {
 // colour view with the shells see-through, to show the electronics inside
 module electronics() {
     color("green") board_dummy(); color("red") bat_dummy(); color("purple") pm_dummy();
-    color("black") oled_dummy(); color("gold") mic_dummy();
+    color("black") oled_dummy(); color("gold") mic_dummy(); color("blue") sw_dummy();
 }
 // colour views with one cap left off, to show the electronics in the bay
 if (part == "view_inside" || part == "view_inside_l") {
@@ -813,6 +826,7 @@ if (part == "view_sofa") {
 if (part == "hook_saddle") hook_saddle_print();
 if (part == "hook_arm")    hook_arm_print();
 if (part == "clash_power") intersection() { slab_head(); union() { bat_dummy(); pm_dummy(); } }
+if (part == "clash_switch") intersection() { sw_dummy(); union() { slab_head(); board_dummy(); pm_dummy(); bat_dummy(); oled_dummy(); } }
 if (part == "clash_power_board") intersection() { union() { bat_dummy(); pm_dummy(); } board_dummy(); }
 if (part == "cap_right") cap_right_print();
 if (part == "cap_left")  cap_left_print();
@@ -828,6 +842,7 @@ if (part == "clash_laser") intersection() {   // largest laser resting in the cr
     translate([0, -sight_len/2, laser_z]) rotate([-90, 0, 0]) cylinder(d = laser_d_max, h = sight_len);
 }
 if (part == "clash_cap_slab_r") intersection() { translate([fudge, 0, 0]) cap_right_head(); slab_head(); }
+if (part == "clash_fill_plug") intersection() { union() { fill_plug_head(); mirror([1, 0, 0]) fill_plug_head(); } union() { slab_head(); electronics(); } }
 if (part == "clash_cap_slab_l") intersection() { translate([-fudge, 0, 0]) cap_left_head(); slab_head(); }
 if (part == "clash_board") intersection() { slab_head(); board_dummy(); }
 if (part == "clash_oled")  intersection() { slab_head(); oled_dummy(); }
